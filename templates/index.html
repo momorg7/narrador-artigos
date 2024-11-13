@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrador de Artigos Científico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Narrador de Artigos Científico</h1>
+        <p class="description">Utilize esta ferramenta para transformar o conteúdo de seus artigos científicos em áudios, facilitando o acesso a informações acadêmicas de forma inclusiva.</p>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="file-upload">
+                <label for="file" class="form-label">Escolha um documento acadêmico (PDF, DOCX, Imagem):</label>
+                <input type="file" class="form-control" id="file" name="file" required>
+            </p>
+
+            </div>
+
+            <label for="language" class="form-label">Selecione o idioma do artigo:</label>
+            <select class="form-control" id="language" name="language" required>
+                <option value="pt-br">Português (Brasil)</option>
+                <option value="en">Inglês</option>
+                <option value="es">Espanhol</option>
+            </select>
+
+            <button type="submit" class="btn-submit">Gerar áudio</button>
+        </form>
+
+        <div class="loading" id="loading" style="display: none;">
+            Processando, aguarde...
+        </div>
+
+        <div class="feedback" id="feedback" style="display: none;"></div>
+
+        <div class="audio-player" id="audioPlayer" style="display: none;">
+            <h3>Áudio Gerado:</h3>
+            <audio controls id="audioElement"></audio>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
