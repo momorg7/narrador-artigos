@@ -3,6 +3,7 @@ import io
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from gtts import gTTS
+import pytesseract
 from pdfminer.high_level import extract_text
 from docx import Document
 from PIL import Image
@@ -14,9 +15,13 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def extract_text_from_image(image_path):
+    return pytesseract.image_to_string(Image.open(image_path))
 
 def extract_text_from_pdf(pdf_path):
     return extract_text(pdf_path)
@@ -26,7 +31,7 @@ def extract_text_from_docx(docx_path):
     return "\n".join([para.text for para in doc.paragraphs])
 
 def generate_audio(text, lang='pt-br'):
-    tts = gTTS(text, lang=lang, tld='com')
+    tts = gTTS(text, lang=lang)
     audio = io.BytesIO()
     tts.write_to_fp(audio)
     audio.seek(0)
@@ -45,7 +50,9 @@ def upload_file():
     filepath = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
     file.save(filepath)
 
-    if filepath.endswith(('pdf')):
+    if filepath.endswith(('png', 'jpg', 'jpeg')):
+        text = extract_text_from_image(filepath)
+    elif filepath.endswith('pdf'):
         text = extract_text_from_pdf(filepath)
     elif filepath.endswith('docx'):
         text = extract_text_from_docx(filepath)
